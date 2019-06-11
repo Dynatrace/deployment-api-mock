@@ -19,14 +19,14 @@ There are several options you can set on the payload for this request:
 | Key           | Description                                                                | Required |
 | ------------- | -------------------------------------------------------------------------- | -------- |
 | platform      | Platform: `unix`, `windows`                                                | Yes      |
-| installerType | Package type: `default`, `default-unattended`                              | Yes      |
+| installerType | Package type: `default`                                                    | Yes      |
 | apiToken      | Token to register the query with.                                          | Yes      |
 | waitTime      | How long to wait before returning a response, e.g. `30m`. Default: no wait | No       |
-| exitCode      | Exit code to be returned by the installer. Default: 0                      | No       |
+| exitCode      | Exit code to be returned by the installer. Default: 0 (Linux only)         | No       |
 
 Currently the following platform/installerType pairs are supported, any others would fail:
 - `unix` / `default`
-- `windows` / `default-unattended`
+- `windows` / `default`
 
 Once a Query has been registered, any subsequent GET requests for the below pattern would return the configured installer package.
 
