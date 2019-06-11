@@ -1,7 +1,6 @@
 package main
 
 import (
-	"archive/zip"
 	"fmt"
 	"io"
 	"log"
@@ -113,21 +112,20 @@ func makeResponseWriter(platform, installerType string, settings url.Values) (fu
 		}
 
 	case "windows":
-		switch installerType {
-		case "default-unattended":
-			return func(w io.Writer) error {
-				zw := zip.NewWriter(w)
+		if exitCode != "0" {
+			return nil, fmt.Errorf("Windows installer doesn't support non-0 exit codes")
+		}
 
-				zfw, err := zw.Create("install.bat")
+		switch installerType {
+		case "default":
+			return func(w io.Writer) error {
+				in, err := os.Open("winsvc.exe")
 				if err != nil {
 					return err
 				}
+				defer in.Close()
 
-				if _, err = zfw.Write([]byte(fmt.Sprintf("EXIT %s\r\n", exitCode))); err != nil {
-					return err
-				}
-
-				if err = zw.Close(); err != nil {
+				if _, err = io.Copy(w, in); err != nil {
 					return err
 				}
 
