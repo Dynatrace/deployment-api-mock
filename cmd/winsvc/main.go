@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"golang.org/x/sys/windows/svc"
@@ -34,11 +33,8 @@ func (m *service) Execute(args []string, r <-chan svc.ChangeRequest, changes cha
 }
 
 func main() {
-	// If not in an interactive session, run the service.
-	if is, err := svc.IsAnInteractiveSession(); err != nil {
-		fmt.Fprintln(os.Stderr, "failed to detect session type")
-		os.Exit(1)
-	} else if !is {
+	// If argument in command line, run as service.
+	if len(os.Args) > 1 && os.Args[1] == "service" {
 		svc.Run(serviceName, &service{})
 		return
 	}

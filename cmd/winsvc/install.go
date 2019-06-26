@@ -36,7 +36,7 @@ func installServiceImpl() error {
 		StartType:   mgr.StartAutomatic,
 	}
 
-	s, err := m.CreateService(serviceName, path, cfg)
+	s, err := m.CreateService(serviceName, path, cfg, "service")
 	if err != nil {
 		return fmt.Errorf("failed to create service: %v", err)
 	}
