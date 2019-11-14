@@ -28,7 +28,7 @@ func (api *deploymentAPI) installerHandler(w http.ResponseWriter, r *http.Reques
 	vars := mux.Vars(r)
 	key := queryKey{
 		// returns only the token instead of the whole 'Api-Token 123asdf' string
-		strings.Split(r.Header.Get("Authorization"), " ")[1],
+		//strings.Split(r.Header.Get("Authorization"), " ")[1],
 		vars["platform"],
 		vars["installerType"],
 	}
