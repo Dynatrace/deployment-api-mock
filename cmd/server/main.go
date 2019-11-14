@@ -14,7 +14,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type queryKey struct{ Token, Platform, InstallerType string }
+//type queryKey struct{ Token, Platform, InstallerType string }
+type queryKey struct{ Platform, InstallerType string }
 
 type queryHandler func(w http.ResponseWriter, r *http.Request) error
 
