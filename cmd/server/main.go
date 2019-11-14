@@ -88,7 +88,8 @@ func (api *deploymentAPI) registerHandler(w http.ResponseWriter, r *http.Request
 	}
 
 	api.mtx.Lock()
-	api.Mocks[queryKey{apiToken, platform, installerType}] = handler
+	//api.Mocks[queryKey{apiToken, platform, installerType}] = handler
+	api.Mocks[queryKey{platform, installerType}] = handler
 	api.mtx.Unlock()
 
 	w.WriteHeader(http.StatusOK)
