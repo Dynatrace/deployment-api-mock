@@ -53,7 +53,7 @@ func (api *deploymentAPI) registerHandler(w http.ResponseWriter, r *http.Request
 
 	if platform == "" || installerType == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("One of required arguments are missing: platform, installerType, apiToken\n"))
+		w.Write([]byte("One of required arguments are missing: platform, installerType\n"))
 		return
 	}
 
