@@ -26,7 +26,8 @@ type deploymentAPI struct {
 func (api *deploymentAPI) installerHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	key := queryKey{
-		r.URL.Query().Get("Api-Token"),
+		// returns only the token instead of the whole 'Api-Token 123asdf' string
+		strings.Split(r.Header.Get("Authorization"), " ")[1],
 		vars["platform"],
 		vars["installerType"],
 	}
@@ -48,9 +49,9 @@ func (api *deploymentAPI) installerHandler(w http.ResponseWriter, r *http.Reques
 func (api *deploymentAPI) registerHandler(w http.ResponseWriter, r *http.Request) {
 	platform := r.FormValue("platform")
 	installerType := r.FormValue("installerType")
-	apiToken := r.FormValue("apiToken")
+	//apiToken := r.FormValue("apiToken")
 
-	if platform == "" || installerType == "" || apiToken == "" {
+	if platform == "" || installerType == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("One of required arguments are missing: platform, installerType, apiToken\n"))
 		return
