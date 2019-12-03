@@ -48,7 +48,10 @@ func (api *deploymentAPI) installerHandler(w http.ResponseWriter, r *http.Reques
 func (api *deploymentAPI) registerHandler(w http.ResponseWriter, r *http.Request) {
 	platform := r.FormValue("platform")
 	installerType := r.FormValue("installerType")
-	apiToken := r.Header.Get("Authorization")
+	apiToken := r.FormValue("apiToken")
+	if apiToken == "" {
+		apiToken = r.Header.Get("Authorization")
+	}
 	if platform == "" || installerType == "" || apiToken == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("One of required arguments are missing: platform, installerType, apiToken\n"))
