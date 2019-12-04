@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -25,9 +26,12 @@ type deploymentAPI struct {
 
 func (api *deploymentAPI) installerHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	authHeader := r.Header.Get("Authorization")
+	apiToken := getApitoken(r)
+	if apiToken == "" {
+		apiToken = r.URL.Query().Get("Api-Token")
+	}
 	key := queryKey{
-		authHeader,
+		apiToken,
 		vars["platform"],
 		vars["installerType"],
 	}
@@ -50,14 +54,13 @@ func (api *deploymentAPI) registerHandler(w http.ResponseWriter, r *http.Request
 	installerType := r.FormValue("installerType")
 	apiToken := r.FormValue("apiToken")
 	if apiToken == "" {
-		apiToken = r.Header.Get("Authorization")
+		apiToken = getApitoken(r)
 	}
 	if platform == "" || installerType == "" || apiToken == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("One of required arguments are missing: platform, installerType, apiToken\n"))
 		return
 	}
-
 	var wait time.Duration
 	var err error
 
@@ -140,6 +143,12 @@ func makeResponseWriter(platform, installerType string, settings url.Values) (fu
 	default:
 		return nil, fmt.Errorf("Unknown platform: %s", platform)
 	}
+}
+
+func getApitoken(r *http.Request) string {
+	headerSplit := strings.Split(r.Header.Get("Authorization"), " ")
+	apiToken := headerSplit[len(headerSplit)-1]
+	return apiToken
 }
 
 func main() {
