@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -25,12 +26,15 @@ type deploymentAPI struct {
 
 func (api *deploymentAPI) installerHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+	apiToken := r.URL.Query().Get("Api-Token")
+	if apiToken == "" {
+		apiToken = strings.Split(r.Header.Get("Authorization"), " ")[1]
+	}
 	key := queryKey{
-		r.URL.Query().Get("Api-Token"),
+		apiToken,
 		vars["platform"],
 		vars["installerType"],
 	}
-
 	api.mtx.Lock()
 	handler, ok := api.Mocks[key]
 	api.mtx.Unlock()
@@ -49,13 +53,14 @@ func (api *deploymentAPI) registerHandler(w http.ResponseWriter, r *http.Request
 	platform := r.FormValue("platform")
 	installerType := r.FormValue("installerType")
 	apiToken := r.FormValue("apiToken")
-
+	if apiToken == "" {
+		apiToken = strings.Split(r.Header.Get("Authorization"), " ")[1]
+	}
 	if platform == "" || installerType == "" || apiToken == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("One of required arguments are missing: platform, installerType, apiToken\n"))
 		return
 	}
-
 	var wait time.Duration
 	var err error
 
