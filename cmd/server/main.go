@@ -26,9 +26,9 @@ type deploymentAPI struct {
 
 func (api *deploymentAPI) installerHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	apiToken := getApitoken(r)
+	apiToken := r.URL.Query().Get("Api-Token")
 	if apiToken == "" {
-		apiToken = r.URL.Query().Get("Api-Token")
+		apiToken = strings.Split(r.Header.Get("Authorization"), " ")[1]
 	}
 	key := queryKey{
 		apiToken,
@@ -54,7 +54,7 @@ func (api *deploymentAPI) registerHandler(w http.ResponseWriter, r *http.Request
 	installerType := r.FormValue("installerType")
 	apiToken := r.FormValue("apiToken")
 	if apiToken == "" {
-		apiToken = getApitoken(r)
+		apiToken = strings.Split(r.Header.Get("Authorization"), " ")[1]
 	}
 	if platform == "" || installerType == "" || apiToken == "" {
 		w.WriteHeader(http.StatusBadRequest)
@@ -143,12 +143,6 @@ func makeResponseWriter(platform, installerType string, settings url.Values) (fu
 	default:
 		return nil, fmt.Errorf("Unknown platform: %s", platform)
 	}
-}
-
-func getApitoken(r *http.Request) string {
-	headerSplit := strings.Split(r.Header.Get("Authorization"), " ")
-	apiToken := headerSplit[len(headerSplit)-1]
-	return apiToken
 }
 
 func main() {
