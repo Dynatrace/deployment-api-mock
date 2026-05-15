@@ -1,3 +1,6 @@
+⚠️ This repository has been archived and is no longer maintained.
+The code is available for historical reference or archival purposes.
+
 # Deployment API Mock
 
 Web application that provides an endpoint to query for OneAgent packages for testing purposes.
